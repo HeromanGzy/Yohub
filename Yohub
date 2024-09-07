@@ -1,0 +1,77 @@
+
+local userInputService = game:GetService("UserInputService")
+local players = game:GetService("Players")
+local player = players.LocalPlayer
+
+-- ui script
+local ui = game.Players.LocalPlayer.PlayerGui:FindFirstChild("Yo Hub")
+if not ui then
+ui = Instance.new("ScreenGui")
+ui.Parent = game.Players.LocalPlayer.PlayerGui
+ui.Name = "Yo Hub"
+end
+
+local texte = Instance.new("TextLabel")
+texte.Parent = ui
+texte.BackgroundColor3 = Color3.new(0, 0, 0)
+texte.BackgroundTransparency = 0.5
+texte.Size = UDim2.new(0, 200, 0, 50)
+texte.Position = UDim2.new(0, 10, 0, 10)
+texte.Font = Enum.Font.SourceSans
+texte.FontSize = Enum.FontSize.Size24
+texte.TextColor3 = Color3.new(1, 1, 1)
+texte.TextStrokeTransparency = 0
+texte.TextStrokeColor3 = Color3.new(0, 0, 0)
+texte.Text = "Yo Hub - AutoClaim & Anti-AFK"
+
+local open = true
+
+local function toggle()
+if open then
+open = false
+texte.Text = "Yo Hub - Closed"
+else
+open = true
+texte.Text = "Yo Hub - AutoClaim & Anti-AFK"
+end
+end
+
+userInputService.InputBegan:Connect(function(input)
+if input.KeyCode == Enum.KeyCode.F1 then
+toggle()
+end
+end)
+
+while open do
+while workspace.ClaimableStars:FindFirstChild("Star") do
+local args = {
+[1] = workspace.ClaimableStars.Star
+}
+
+game:GetService("ReplicatedStorage").Events.ClaimStar:InvokeServer(unpack(args))
+wait(0.01)
+end
+
+-- anti-afk system
+userInputService.InputBegan:Connect(function(input)
+if input.KeyCode == Enum.KeyCode.Space then
+print("anti-afk triggered")
+player.Character.Humanoid.Jump = true
+wait(0.5)
+player.Character.Humanoid.Jump = false
+end
+end)
+
+-- capsule station event
+local args = {
+[1] = 1,
+[2] = 4,
+[3] = 20071,
+[4] = 5
+}
+
+game:GetService("ReplicatedStorage").GameCommon.Messages.CapsulestationEvent:FireServer(unpack(args))
+wait(0.01)
+
+wait(0.1)
+end
